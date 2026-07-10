@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>July Training Log</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-50:#E1F5EE; --teal-200:#5DCAA5; --teal-400:#1D9E75; --teal-600:#0F6E56; --teal-800:#085041; --teal-900:#04342C;
+    --ink:#0E1614; --panel:#14201E; --panel-2:#1B2926; --line:#25342F; --line-soft:#1E2C29;
+    --text:#F2F6F4; --text-soft:#9FB3AD; --text-mute:#5F726C;
+    --amber:#EF9F27; --coral:#D85A30;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; background:var(--ink); color:var(--text);
+    font-family:'Inter',-apple-system,sans-serif;
+    padding:0 0 4rem;
+  }
+  .hero{
+    background:linear-gradient(180deg,var(--teal-900) 0%, var(--ink) 100%);
+    padding:2.5rem 1.5rem 1.75rem;
+    border-bottom:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(115deg, rgba(93,202,165,0.05) 0 2px, transparent 2px 42px);
+    pointer-events:none;
+  }
+  .hero-inner{max-width:760px; margin:0 auto; position:relative;}
+  .eyebrow{
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--teal-200);
+    font-weight:600; margin:0 0 .35rem;
+  }
+  h1.title{
+    font-family:'Bebas Neue',sans-serif; font-weight:400;
+    font-size:clamp(2.6rem,9vw,4.2rem); line-height:.9; margin:0;
+    letter-spacing:.01em; color:#fff;
+  }
+  h1.title span{color:var(--teal-200);}
+  .stats{
+    display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+    margin-top:1.75rem;
+  }
+  .stat{
+    background:rgba(255,255,255,0.04); border:1px solid var(--line);
+    border-radius:var(--radius); padding:.85rem .9rem;
+  }
+  .stat .num{font-family:'Bebas Neue',sans-serif; font-size:1.9rem; color:var(--teal-200); line-height:1;}
+  .stat .lbl{font-size:11px; color:var(--text-soft); text-transform:uppercase; letter-spacing:.06em; margin-top:.3rem;}
+  .progress-track{
+    margin-top:1.25rem; height:6px; background:var(--line-soft); border-radius:99px; overflow:hidden;
+  }
+  .progress-fill{
+    height:100%; background:linear-gradient(90deg,var(--teal-600),var(--teal-200)); width:0%;
+    transition:width .4s ease;
+  }
+
+  .wrap{max-width:760px; margin:0 auto; padding:1.5rem;}
+  .week-label{
+    font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--text-mute);
+    margin:1.6rem 0 .6rem; padding-left:.15rem;
+  }
+  .week-label:first-child{margin-top:0;}
+
+  .day-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:1rem 1.1rem; margin-bottom:.6rem;
+    transition:border-color .15s ease, background .15s ease;
+  }
+  .day-card.done{border-color:var(--teal-600); background:var(--panel-2);}
+  .day-card.rest{opacity:.82;}
+
+  .day-top{display:flex; align-items:flex-start; gap:.8rem;}
+  .day-num-wrap{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-width:44px;
+  }
+  .day-num{font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:var(--text); line-height:1;}
+  .day-dow{font-size:10px; color:var(--text-mute); text-transform:uppercase; letter-spacing:.05em; margin-top:2px;}
+
+  .day-body{flex:1; min-width:0;}
+  .day-heading{display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; margin-bottom:.2rem;}
+  .workout-text{font-size:14.5px; color:var(--text); line-height:1.45;}
+  .badge{
+    font-size:10px; font-weight:700; letter-spacing:.04em; padding:2px 7px; border-radius:99px;
+    text-transform:uppercase; flex-shrink:0;
+  }
+  .badge-new{background:var(--teal-800); color:var(--teal-50);}
+  .badge-rest{background:var(--line-soft); color:var(--text-soft);}
+  .badge-bday{background:var(--coral); color:#2C0F04;}
+
+  .check-btn{
+    width:30px; height:30px; border-radius:50%; border:1.5px solid var(--line);
+    background:transparent; flex-shrink:0; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; color:transparent;
+    transition:all .15s ease; margin-top:2px;
+  }
+  .check-btn.checked{background:var(--teal-600); border-color:var(--teal-600); color:var(--teal-50);}
+  .check-btn svg{width:15px; height:15px;}
+
+  .day-inputs{
+    display:flex; gap:.6rem; margin-top:.7rem; padding-top:.7rem; border-top:1px solid var(--line-soft);
+  }
+  .field{flex:1;}
+  .field label{
+    display:block; font-size:10px; color:var(--text-mute); text-transform:uppercase;
+    letter-spacing:.05em; margin-bottom:.3rem;
+  }
+  .field input{
+    width:100%; background:var(--ink); border:1px solid var(--line); border-radius:8px;
+    color:var(--text); font-size:13.5px; padding:.5rem .6rem; font-family:'Inter',sans-serif;
+  }
+  .field input:focus{outline:none; border-color:var(--teal-400);}
+  .field input::placeholder{color:var(--text-mute);}
+  .field.notes{flex:1.6;}
+
+  .footer-note{
+    max-width:760px; margin:1.5rem auto 0; padding:0 1.5rem; font-size:12px; color:var(--text-mute);
+    display:flex; align-items:center; gap:.4rem;
+  }
+
+  @media(max-width:480px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .day-inputs{flex-direction:column; gap:.5rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <p class="eyebrow">Workout with Roxanne · 2026</p>
+    <h1 class="title">JULY <span>LOG</span></h1>
+    <div class="stats">
+      <div class="stat"><div class="num" id="stat-done">0</div><div class="lbl">Completed</div></div>
+      <div class="stat"><div class="num" id="stat-total">0</div><div class="lbl">Workouts</div></div>
+      <div class="stat"><div class="num" id="stat-streak">0</div><div class="lbl">Streak</div></div>
+      <div class="stat"><div class="num" id="stat-rest">0</div><div class="lbl">Rest days</div></div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+</div>
+
+<div class="wrap" id="calendar"></div>
+
+<p class="footer-note">Tap a day to check it off. Log the weight you used and any notes — it's saved automatically.</p>
+
+<script>
+const DAYS = [
+  {d:1, dow:'Wed', text:'Rest Day or 30 Min Full Body Kettlebell Mobility', rest:true},
+  {d:2, dow:'Thu', text:'20 Min Full Body Workout + 10 Min Standing Abs Workout', isNew:true},
+  {d:3, dow:'Fri', text:'30 Min Lower Body Supersets + 10 Min Glutes'},
+  {d:4, dow:'Sat', text:'20 Min Back, Arms & Abs Kettlebells + 10 Min Chest, Triceps & Biceps Dumbbells'},
+  {d:5, dow:'Sun', text:'Go for a walk or Rest', rest:true},
+  {d:6, dow:'Mon', text:'30 Min Lower Body Metcon Dumbbells Workout'},
+  {d:7, dow:'Tue', text:'30 Min Upper Body Dumbbells'},
+  {d:8, dow:'Wed', text:'Rest Day or 30 Min Full Body Pilates', rest:true},
+  {d:9, dow:'Thu', text:'30 Min Build Your Glutes Dumbbell Workout (Knee Friendly)', isNew:true},
+  {d:10, dow:'Fri', text:'25 Min Upper Body Kettlebells + 10 Min Dumbbell Arms Workout'},
+  {d:11, dow:'Sat', text:'30 Min Hyrox Kettlebell Workout (No jumping options)'},
+  {d:12, dow:'Sun', text:'Go for a walk or Rest', rest:true},
+  {d:13, dow:'Mon', text:'35 Min Upper Body & Abs Kettlebells'},
+  {d:14, dow:'Tue', text:'20 Min Glutes & Legs Dumbbells + 15 Min Side Glutes Workout', isNew:true},
+  {d:15, dow:'Wed', text:'Rest Day or 15 Min Full Body Mobility', rest:true},
+  {d:16, dow:'Thu', text:'30 Min Full Body Kettlebell Strength (No repeats)', isNew:true, bday:true},
+  {d:17, dow:'Fri', text:'15 Min Upper Body Functional Core + 15 Min Arms & Abs Workout'},
+  {d:18, dow:'Sat', text:'30 Min Lower Body Glutes & Legs Dumbbells Workout'},
+  {d:19, dow:'Sun', text:'Go for a walk or Rest', rest:true},
+  {d:20, dow:'Mon', text:'45 Min Upper Body Supersets'},
+  {d:21, dow:'Tue', text:'30 Min Full Body Dumbbell Strength & Conditioning (No Jumping Options)', isNew:true},
+  {d:22, dow:'Wed', text:'Rest Day or 30 Min Full Body Pilates', rest:true},
+  {d:23, dow:'Thu', text:'30 Min Lower Body Knee Friendly Kettlebells'},
+  {d:24, dow:'Fri', text:'25 Min Upper Body Dumbbell Supersets + 10 Min Abs Workout'},
+  {d:25, dow:'Sat', text:'30 Min Full Body Metcon Workout'},
+  {d:26, dow:'Sun', text:'Go for a walk or Rest', rest:true},
+  {d:27, dow:'Mon', text:'30 Min Lower Body Dumbbells'},
+  {d:28, dow:'Tue', text:'15 Min Arms & Abs + 15 Min Swing Supersets', isNew:true},
+  {d:29, dow:'Wed', text:'Rest Day or 30 Min Full Body Pilates (All Floor Based exercises)', rest:true},
+  {d:30, dow:'Thu', text:'20 Min Full Body Knee Friendly Metcon + 10 Min Daily Dumbbell Abs Routine', isNew:true},
+];
+
+const STORAGE_KEY = 'july-2026-tracker';
+let state = {};
+
+function checkIcon(){
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+}
+
+function weekLabel(idx){
+  return 'Week ' + idx;
+}
+
+async function loadState(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY);
+    state = res && res.value ? JSON.parse(res.value) : {};
+  }catch(e){
+    state = {};
+  }
+}
+
+async function saveState(){
+  try{
+    await window.storage.set(STORAGE_KEY, JSON.stringify(state));
+  }catch(e){
+    console.error('Save failed', e);
+  }
+}
+
+function getEntry(day){
+  return state[day] || {done:false, weight:'', notes:''};
+}
+
+function render(){
+  const cal = document.getElementById('calendar');
+  cal.innerHTML = '';
+  let currentWeek = 0;
+
+  DAYS.forEach((day, i) => {
+    if(day.dow === 'Mon' || i === 0){
+      currentWeek++;
+      const lbl = document.createElement('div');
+      lbl.className = 'week-label';
+      lbl.textContent = weekLabel(currentWeek);
+      cal.appendChild(lbl);
+    }
+
+    const entry = getEntry(day.d);
+    const card = document.createElement('div');
+    card.className = 'day-card' + (entry.done ? ' done' : '') + (day.rest ? ' rest' : '');
+
+    let badges = '';
+    if(day.bday) badges += '<span class="badge badge-bday">Birthday</span>';
+    if(day.isNew) badges += '<span class="badge badge-new">New</span>';
+    if(day.rest) badges += '<span class="badge badge-rest">Optional rest</span>';
+
+    card.innerHTML = `
+      <div class="day-top">
+        <div class="day-num-wrap">
+          <div class="day-num">${day.d}</div>
+          <div class="day-dow">${day.dow}</div>
+        </div>
+        <div class="day-body">
+          <div class="day-heading">${badges}</div>
+          <div class="workout-text">${day.text}</div>
+          <div class="day-inputs">
+            <div class="field">
+              <label for="weight-${day.d}">Weight (lb)</label>
+              <input type="number" inputmode="decimal" min="0" step="0.5" id="weight-${day.d}" placeholder="e.g. 25" value="${entry.weight}">
+            </div>
+            <div class="field notes">
+              <label for="notes-${day.d}">Notes</label>
+              <input type="text" id="notes-${day.d}" placeholder="How it felt, reps, etc." value="${entry.notes ? entry.notes.replace(/"/g,'&quot;') : ''}">
+            </div>
+          </div>
+        </div>
+        <button class="check-btn ${entry.done ? 'checked' : ''}" id="check-${day.d}" aria-label="Mark day ${day.d} complete">${checkIcon()}</button>
+      </div>
+    `;
+    cal.appendChild(card);
+
+    card.querySelector('#check-' + day.d).addEventListener('click', async () => {
+      const e = getEntry(day.d);
+      e.done = !e.done;
+      state[day.d] = e;
+      await saveState();
+      render();
+      updateStats();
+    });
+
+    const weightInput = card.querySelector('#weight-' + day.d);
+    weightInput.addEventListener('change', async () => {
+      const e = getEntry(day.d);
+      e.weight = weightInput.value;
+      state[day.d] = e;
+      await saveState();
+    });
+
+    const notesInput = card.querySelector('#notes-' + day.d);
+    notesInput.addEventListener('change', async () => {
+      const e = getEntry(day.d);
+      e.notes = notesInput.value;
+      state[day.d] = e;
+      await saveState();
+    });
+  });
+}
+
+function updateStats(){
+  const workoutDays = DAYS.filter(d => !d.rest);
+  const restDays = DAYS.filter(d => d.rest);
+  const doneCount = DAYS.filter(d => getEntry(d.d).done).length;
+
+  let streak = 0;
+  for(let i = DAYS.length - 1; i >= 0; i--){
+    if(getEntry(DAYS[i].d).done) streak++;
+    else break;
+  }
+
+  document.getElementById('stat-done').textContent = doneCount;
+  document.getElementById('stat-total').textContent = workoutDays.length;
+  document.getElementById('stat-streak').textContent = streak;
+  document.getElementById('stat-rest').textContent = restDays.length;
+
+  const pct = Math.round((doneCount / DAYS.length) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
+
+(async function init(){
+  await loadState();
+  render();
+  updateStats();
+})();
+</script>
+</body>
+</html>
